@@ -1,6 +1,7 @@
 namespace AuctionService.Controllers;
 
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Data;
 using Dtos;
 using Entities;
@@ -22,14 +23,16 @@ public class AuctionsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AuctionDto>>> GetAuctions()
+    public async Task<ActionResult<IEnumerable<AuctionDto>>> GetAuctions(string date = null)
     {
-        var auctions = await _context.Auctions
-            .Include(x => x.Item)
-            .OrderBy(x => x.Item.Make)
-            .ToListAsync();
+        var query = _context.Auctions.OrderBy(x => x.Item.Make).AsQueryable();
+        
+        if (!string.IsNullOrEmpty(date))
+            query = query.Where(x => x.CreatedAt.CompareTo(DateTime.Parse(date).ToUniversalTime()) > 0 
+                                     || (x.UpdatedAt.HasValue 
+                                         && x.UpdatedAt.Value.CompareTo(DateTime.Parse(date).ToUniversalTime()) > 0));
 
-        return _mapper.Map<List<AuctionDto>>(auctions);
+        return await query.ProjectTo<AuctionDto>(_mapper.ConfigurationProvider).ToListAsync();
     }
 
     [HttpGet("{id:guid}")]
@@ -80,6 +83,8 @@ public class AuctionsController : ControllerBase
         auction.Item.Color = request.Color ?? auction.Item.Color;
         auction.Item.Year = request.Year ?? auction.Item.Year;
         auction.Item.Mileage = request.Mileage ?? auction.Item.Mileage;
+        auction.Item.UpdatedAt = DateTime.UtcNow;
+        auction.UpdatedAt = DateTime.UtcNow;
 
         var result = await _context.SaveChangesAsync() > 0;
         
