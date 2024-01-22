@@ -1,7 +1,6 @@
 namespace AuctionService.Entities;
 
 using Base;
-using Interfaces;
 
 public class Auction : Entity
 {
