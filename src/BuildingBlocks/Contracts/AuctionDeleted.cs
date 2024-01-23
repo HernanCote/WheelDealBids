@@ -1,6 +1,3 @@
 namespace BuildingBlocks.Contracts;
 
-public class AuctionDeleted
-{
-    
-}
+public record AuctionDeleted(Guid Id);

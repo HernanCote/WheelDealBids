@@ -1,10 +1,10 @@
-namespace SearchService.Services;
+namespace SearchService.Clients;
 
-using Entities;
-using Interfaces;
 using Microsoft.Extensions.Options;
 using MongoDB.Entities;
-using Settings;
+using SearchService.Clients.Interfaces;
+using SearchService.Entities;
+using SearchService.Settings;
 
 public class AuctionServiceHttpClient : IAuctionServiceHttpClient
 {

@@ -1,12 +1,11 @@
 namespace SearchService.StartupExtensions;
 
-using System.Text.Json;
+using Clients.Interfaces;
 using Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Entities;
-using Services;
-using Services.Interfaces;
+using Serilog;
 using Settings;
 
 public static class ConfigureMongoDb
@@ -29,20 +28,18 @@ public static class ConfigureMongoDb
 
     public static async Task Initialize(this IApplicationBuilder app)
     {
-        var count = await DB.CountAsync<Item>();
-
-        Console.WriteLine("Fetching data from Auction Service");
+        Log.Information("Fetching latest data from Auction Service");
 
         using var scope = app.ApplicationServices.CreateScope();
         var httpClient = scope.ServiceProvider.GetRequiredService<IAuctionServiceHttpClient>();
         var items = await httpClient.GetItemsForSearchDb();
 
-        Console.WriteLine($"{items.Count()} items returned from auction service" );
+        Log.Information("{ItemCount} items returned from auction service", items.Count());
 
         if (!items.Any())
             return;
 
-        Console.WriteLine("Saving new items to database");
+        Log.Information("Saving new items to database");
 
         await DB.SaveAsync(items);
     }

@@ -1,39 +1,30 @@
-using System.Net;
-using Polly;
-using Polly.Extensions.Http;
-using SearchService.Services;
-using SearchService.Services.Interfaces;
-using SearchService.Settings;
-using SearchService.StartupExtensions;
+using BuildingBlocks.Extensions.Authentication;
+using SearchService;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-// Add services to the container.
+Log.Information("Starting up SearchService");
 
-builder.Services.AddControllers();
-builder.Services
-    .AddHttpClient<IAuctionServiceHttpClient, AuctionServiceHttpClient>()
-    .AddPolicyHandler(GetRetryPolicy());
-
-builder.Services.Configure<MongoDbSettings>(
-    builder.Configuration.GetSection(nameof(MongoDbSettings)));
-builder.Services.Configure<AuctionServiceSettings>(
-    builder.Configuration.GetSection(nameof(AuctionServiceSettings)));
-
-var app = builder.Build();
-
-app.UseAuthorization();
-app.MapControllers();
-
-app.Lifetime.ApplicationStarted.Register(async () =>
+try
 {
-    await app.UseMongoDb();
-    await app.Initialize();
-});
+    var builder = WebApplication.CreateBuilder(args);
+    
+    var app = builder
+         .ConfigureServices()
+         .ConfigurePipeline();
 
-app.Run();
+     app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
+{
+    Log.Information("SearchService shut down complete");
+    Log.CloseAndFlush();
+}
 
-static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy() => HttpPolicyExtensions
-    .HandleTransientHttpError()
-    .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
-    .WaitAndRetryForeverAsync(_ => TimeSpan.FromSeconds(3));

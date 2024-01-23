@@ -1,4 +1,4 @@
-namespace SearchService.Services.Interfaces;
+namespace SearchService.Clients.Interfaces;
 
 using Entities;
 

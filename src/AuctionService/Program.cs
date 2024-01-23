@@ -1,49 +1,34 @@
-using System.Text.Json.Serialization;
-using AuctionService.Consumers;
-using AuctionService.Data;
-using AuctionService.Utils;
-using MassTransit;
-using Microsoft.EntityFrameworkCore;
+using AuctionService;
+using BuildingBlocks.Extensions.Logging;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-// Add services to the container.
-builder.Services.AddControllers().AddJsonOptions(options => 
+Log.Information("Starting up AuctionService");
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
+
+try
 {
-    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-});
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AuctionDbContext>(options =>
+    var app = builder
+        .ConfigureServices()
+        .ConfigurePipeline();
+
+    app.Run();
+}
+catch (Exception ex)
 {
-    options
-        .UseNpgsql(builder.Configuration.GetConnectionString("AuctionConnection"))
-        .UseSnakeCaseNamingConvention();
-});
-
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddMassTransit(x =>
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
 {
-    x.AddEntityFrameworkOutbox<AuctionDbContext>(o =>
-    {
-        o.QueryDelay = TimeSpan.FromSeconds(10);
-        o.UsePostgres();
-        o.UseBusOutbox();
-    });
-    
-    x.AddConsumersFromNamespaceContaining<AuctionCreatedFaultConsumer>();
-    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auction", false));
-    
-    x.UsingRabbitMq((context, config) =>
-    {
-        config.ConfigureEndpoints(context);
-    });
-});
+    Log.Information("AuctionService shut down complete");
+    Log.CloseAndFlush();
+}
 
-var app = builder.Build();
-
-app.UseAuthorization();
-app.MapControllers();
-
-SeedInitialData.Initialize(app);
-
-app.Run();
