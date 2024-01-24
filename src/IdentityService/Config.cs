@@ -32,6 +32,18 @@ public static class Config
                     new Secret("NotASecret".Sha256())
                 },
                 AllowedGrantTypes = { GrantType.ResourceOwnerPassword }
+            },
+            new()
+            {
+                ClientId = "carsties-web",
+                ClientName = "CarstiesWeb",
+                ClientSecrets = { new Secret("secret".Sha256()) },
+                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                RequirePkce = false,
+                RedirectUris = { "http://localhost:3000/api/auth/callback/id-server" },
+                AllowOfflineAccess = true,
+                AllowedScopes = {"openid", "profile", "auctionApp"},
+                AccessTokenLifetime = 3600 * 24 * 30 // only for dev purposes
             }
         };
 }

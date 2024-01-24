@@ -1,5 +1,4 @@
 using AuctionService;
-using BuildingBlocks.Extensions.Logging;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -7,10 +6,6 @@ Log.Logger = new LoggerConfiguration()
     .CreateBootstrapLogger();
 
 Log.Information("Starting up AuctionService");
-
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
 
 try
 {
