@@ -7,8 +7,8 @@ public static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        builder.ConfigureCarstiesLogs();
-        builder.ConfigureCarstiesAuthentication();
+        builder.ConfigureWheelDealBidsLogs();
+        builder.ConfigureWheelDealBidsAuthentication();
         
         builder.Services.AddReverseProxy()
             .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));

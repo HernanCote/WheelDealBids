@@ -16,7 +16,7 @@ public static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        builder.ConfigureCarstiesLogs();
+        builder.ConfigureWheelDealBidsLogs();
         
         builder.Services.AddControllers();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

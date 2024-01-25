@@ -16,7 +16,7 @@ internal static class HostingExtensions
         builder.Services.AddRazorPages();
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("CarstiesConnection"))
+            options.UseNpgsql(builder.Configuration.GetConnectionString("WheelDealBidsConnection"))
                 .UseSnakeCaseNamingConvention());
 
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

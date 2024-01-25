@@ -35,8 +35,8 @@ public static class Config
             },
             new()
             {
-                ClientId = "carsties-web",
-                ClientName = "CarstiesWeb",
+                ClientId = "wheeldealbids-web",
+                ClientName = "wheeldealbidsWeb",
                 ClientSecrets = { new Secret("secret".Sha256()) },
                 AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                 RequirePkce = false,

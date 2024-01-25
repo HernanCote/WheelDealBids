@@ -3,14 +3,14 @@ WORKDIR /app
 EXPOSE 80
 
 
-COPY carsties.sln carsties.sln
+COPY WheelDealBids.sln WheelDealBids.sln
 COPY src/AuctionService/AuctionService.csproj src/AuctionService/AuctionService.csproj
 COPY src/SearchService/SearchService.csproj src/SearchService/SearchService.csproj
 COPY src/GatewayService/GatewayService.csproj src/GatewayService/GatewayService.csproj
 COPY src/BuildingBlocks/BuildingBlocks.csproj src/BuildingBlocks/BuildingBlocks.csproj
 COPY src/IdentityService/IdentityService.csproj src/IdentityService/IdentityService.csproj
 
-RUN dotnet restore carsties.sln
+RUN dotnet restore WheelDealBids.sln
 
 COPY src/AuctionService src/AuctionService
 COPY src/BuildingBlocks src/BuildingBlocks

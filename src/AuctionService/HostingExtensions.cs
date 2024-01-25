@@ -14,7 +14,7 @@ public static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        builder.ConfigureCarstiesLogs();
+        builder.ConfigureWheelDealBidsLogs();
         
         builder.Services.AddControllers().AddJsonOptions(options => 
         {
@@ -24,7 +24,7 @@ public static class HostingExtensions
         builder.Services.AddDbContext<AuctionDbContext>(options =>
         {
             options
-                .UseNpgsql(builder.Configuration.GetConnectionString("CarstiesConnection"))
+                .UseNpgsql(builder.Configuration.GetConnectionString("WheelDealBidsConnection"))
                 .UseSnakeCaseNamingConvention();
         });
 
@@ -52,7 +52,7 @@ public static class HostingExtensions
             });
         });
 
-        builder.ConfigureCarstiesAuthentication();
+        builder.ConfigureWheelDealBidsAuthentication();
 
         return builder.Build();
     }

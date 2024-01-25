@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 public static class AuthenticationConfiguration
 {
-    public static void ConfigureCarstiesAuthentication(this WebApplicationBuilder builder)
+    public static void ConfigureWheelDealBidsAuthentication(this WebApplicationBuilder builder)
     {
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
