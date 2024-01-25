@@ -20,7 +20,7 @@ public class AuctionCreatedConsumer : IConsumer<AuctionCreated>
     public async Task Consume(ConsumeContext<AuctionCreated> context)
     {
         _logger.LogInformation("Received {Event} event with id: {AuctionId}", nameof(AuctionCreated), context.Message.Id);
-
+        
         var item = _mapper.Map<Item>(context.Message);
         await item.SaveAsync();
         

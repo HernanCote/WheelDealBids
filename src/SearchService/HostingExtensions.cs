@@ -31,33 +31,24 @@ public static class HostingExtensions
 
         builder.Services.AddMassTransit(x =>
         {
-            x.AddConsumersFromNamespaceContaining<AuctionCreatedConsumer>();
-            x.AddConsumersFromNamespaceContaining<AuctionUpdatedConsumer>();
-            x.AddConsumersFromNamespaceContaining<AuctionDeletedConsumer>();
-            x.AddConsumersFromNamespaceContaining<AuctionFinishedConsumer>();
-            x.AddConsumersFromNamespaceContaining<BidPlacedConsumer>();
-    
             x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("search", false));
+            
+            x.AddConsumersFromNamespaceContaining<AuctionCreatedConsumer>();
+            
             x.UsingRabbitMq((context, config) =>
             {
+                config.Host(builder.Configuration["RabbitMq:Host"], "/", host =>
+                {
+                    host.Username(builder.Configuration.GetValue("RabbitMq:Username", "guest"));
+                    host.Password(builder.Configuration.GetValue("RabbitMq:Password", "guest"));
+                });
+                
                 config.ReceiveEndpoint("search-auction-created", e =>
                 {
                     e.UseMessageRetry(r => r.Interval(5, 5));
                     e.ConfigureConsumer<AuctionCreatedConsumer>(context);
                 });
-        
-                config.ReceiveEndpoint("search-auction-updated", e =>
-                {
-                    e.UseMessageRetry(r => r.Interval(5, 5));
-                    e.ConfigureConsumer<AuctionUpdatedConsumer>(context);
-                });
-        
-                config.ReceiveEndpoint("search-auction-deleted", e =>
-                {
-                    e.UseMessageRetry(r => r.Interval(5, 5));
-                    e.ConfigureConsumer<AuctionDeletedConsumer>(context);
-                });
-        
+
                 config.ConfigureEndpoints(context);
             });
         });
