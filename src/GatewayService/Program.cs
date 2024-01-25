@@ -1,4 +1,3 @@
-using BuildingBlocks.Extensions.Authentication;
 using GatewayService;
 using Serilog;
 
