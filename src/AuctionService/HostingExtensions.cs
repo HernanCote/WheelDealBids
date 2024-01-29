@@ -5,8 +5,11 @@ using BuildingBlocks.Extensions.Authentication;
 using BuildingBlocks.Extensions.Logging;
 using Consumers;
 using Data;
+using Data.Repo;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using Polly;
 using Serilog;
 using Utils;
 
@@ -43,6 +46,12 @@ public static class HostingExtensions
     
             x.UsingRabbitMq((context, config) =>
             {
+                config.UseMessageRetry(r => 
+                {
+                    r.Handle<RabbitMqConnectionException>();
+                    r.Interval(5, TimeSpan.FromSeconds(10));
+                });
+                
                 config.Host(builder.Configuration["RabbitMq:Host"], "/", host =>
                 {
                     host.Username(builder.Configuration.GetValue("RabbitMq:Username", "guest"));
@@ -54,6 +63,8 @@ public static class HostingExtensions
 
         builder.ConfigureWheelDealBidsAuthentication();
 
+        builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
+        
         return builder.Build();
     }
 
@@ -65,8 +76,10 @@ public static class HostingExtensions
         app.UseAuthorization();
         app.MapControllers();
 
-        SeedInitialData.Initialize(app);
+        var retryPolicy = Policy.Handle<NpgsqlException>()
+            .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(10));
 
+        retryPolicy.ExecuteAndCapture(() => SeedInitialData.Initialize(app));
         return app;
     }
     

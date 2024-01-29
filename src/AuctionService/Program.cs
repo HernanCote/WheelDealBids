@@ -3,7 +3,7 @@ using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .CreateBootstrapLogger();
+    .CreateLogger();
 
 Log.Information("Starting up AuctionService");
 
@@ -26,4 +26,6 @@ finally
     Log.Information("AuctionService shut down complete");
     Log.CloseAndFlush();
 }
+
+public partial class Program {}
 

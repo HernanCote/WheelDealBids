@@ -11,33 +11,7 @@
     <projectFile profileName="https">src/SearchService/SearchService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2312cfb3-6338-4568-b00c-c16c63c04a96" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.WheelDealBids/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.WheelDealBids/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.WheelDealBids/.idea/indexLayout.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.WheelDealBids/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.carsties/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.carsties/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.carsties/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.carsties/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/tasks.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/carsties.sln" beforeDir="false" afterPath="$PROJECT_DIR$/WheelDealBids.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AuctionService/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/src/AuctionService/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AuctionService/HostingExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/AuctionService/HostingExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AuctionService/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/AuctionService/appsettings.Development.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BuildingBlocks/Extensions/Authentication/AuthenticationConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/BuildingBlocks/Extensions/Authentication/AuthenticationConfiguration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BuildingBlocks/Extensions/Logging/LogConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/BuildingBlocks/Extensions/Logging/LogConfiguration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GatewayService/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/src/GatewayService/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GatewayService/HostingExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/GatewayService/HostingExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IdentityService/Config.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/IdentityService/Config.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IdentityService/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/src/IdentityService/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IdentityService/HostingExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/IdentityService/HostingExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IdentityService/Pages/Shared/_Nav.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/IdentityService/Pages/Shared/_Nav.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IdentityService/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/IdentityService/appsettings.Development.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SearchService/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/src/SearchService/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SearchService/HostingExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/SearchService/HostingExtensions.cs" afterDir="false" />
-    </list>
+    <list default="true" id="2312cfb3-6338-4568-b00c-c16c63c04a96" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -237,7 +211,7 @@
       <workItem from="1706132970407" duration="6734000" />
       <workItem from="1706146695322" duration="287000" />
       <workItem from="1706147241478" duration="5510000" />
-      <workItem from="1706205737807" duration="366000" />
+      <workItem from="1706205737807" duration="1936000" />
     </task>
     <servers />
   </component>

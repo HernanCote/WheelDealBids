@@ -10,6 +10,6 @@ public class AuctionConfiguration : IEntityTypeConfiguration<Auction>
     {
         builder.HasOne(auction => auction.Item)
                 .WithOne(item => item.Auction)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
     }
 }

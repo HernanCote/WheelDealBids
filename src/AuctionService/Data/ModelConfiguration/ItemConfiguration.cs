@@ -11,6 +11,6 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
         builder.HasOne(item => item.Auction)
                 .WithOne(auction => auction.Item)
                 .HasForeignKey<Item>(item => item.AuctionId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
     }
 }
