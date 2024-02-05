@@ -1,7 +1,9 @@
 #nullable enable
 namespace AuctionService.Dtos;
 
-public class UpdateAuctionDto
+using BuildingBlocks;
+
+public class UpdateAuctionDto : UpdateModelBase
 {
     public string? Make { get; set; }
     public string? Model { get; set; }

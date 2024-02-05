@@ -1,9 +1,11 @@
 namespace IntegrationTests;
 
+using System.Net;
 using System.Net.Http.Json;
 using AuctionService.Data;
 using AuctionService.Dtos;
 using Fixtures;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Utils;
 
@@ -24,9 +26,89 @@ public class AuctionControllerTests : IClassFixture<CustomWebAppFactory>, IAsync
     public async Task GetAuctions_NoParams_ShouldReturnAllAuctions()
     {
         var response = await _httpClient.GetFromJsonAsync<IList<AuctionDto>>("auctions");
+        
+        Assert.NotNull(response);
+        
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AuctionDbContext>();
+        var auctionsInDb = await db.Auctions.ToListAsync();
+        
+        Assert.Equal(auctionsInDb.Count, response.Count);
+    }
+    
+    [Fact]
+    public async Task GetAuctionById_WithValidId_ShouldReturnAuction()
+    {
+        var response = await _httpClient.GetFromJsonAsync<AuctionDto>($"auctions/{DbHelpers.GT_ID}");
 
         Assert.NotNull(response);
-        Assert.Equal(3, response.Count);
+        Assert.Equal(DbHelpers.GT_ID, response.Id.ToString());
+        Assert.Equal("Ford", response.Make);
+        Assert.Equal("GT", response.Model);
+    }
+    
+    [Fact]
+    public async Task GetAuctionById_WithInvalidId_ShouldReturnNotFound()
+    {
+        var response = await _httpClient.GetAsync($"auctions/{Guid.NewGuid()}");
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task GetAuctionById_WithInvalidGuid_ShouldReturnBadRequest()
+    {
+        var response = await _httpClient.GetAsync("auctions/noguid");
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task CreateAuction_WithWithNoAuth_ShouldReturnNotAuthorized()
+    {
+        var auction = new CreateAuctionDto
+        {
+            Make = "Ford"
+        };
+        
+        var response = await _httpClient.PostAsJsonAsync("auctions", auction);
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task CreateAuction_WithWithAuth_ShouldReturnCreated()
+    {
+        var auction = GetAuctionForCreate();
+        var username = "Hernan";
+        _httpClient.SetFakeJwtBearerToken(AuthHelpers.GetBearerForUser(username));
+        
+        var response = await _httpClient.PostAsJsonAsync("auctions", auction);
+
+        Assert.NotNull(response);
+        response.EnsureSuccessStatusCode();
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var createdAuction = await response.Content.ReadFromJsonAsync<AuctionDto>();
+        Assert.NotNull(createdAuction);
+        Assert.Equal(username, createdAuction.Seller);
+        Assert.Equal(auction.Model, createdAuction.Model);
+        Assert.Equal(auction.Make, createdAuction.Make);
+    }
+    
+    private CreateAuctionDto GetAuctionForCreate()
+    {
+        return new CreateAuctionDto
+        {
+            Make = "test",
+            Model = "testModel",
+            ImageUrl = "test",
+            Color = "test",
+            Mileage = 10,
+            Year = 2021
+        };
     }
 
     public Task DisposeAsync()

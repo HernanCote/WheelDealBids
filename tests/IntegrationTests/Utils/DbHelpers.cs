@@ -5,6 +5,8 @@ using AuctionService.Entities;
 
 public static class DbHelpers
 {
+    public const string GT_ID = "afbee524-3e3e-4e3e-8e3e-3e3e3e3e3e3e";
+    
     public static void InitDbForTests(AuctionDbContext db)
     {
         db.Auctions.AddRange(GetTestAuctions());
@@ -13,7 +15,7 @@ public static class DbHelpers
     
     public static void ReinitializeDbForTests(AuctionDbContext db)
     {
-        db.Auctions.RemoveRange();
+        db.Auctions.RemoveRange(db.Auctions);
         db.SaveChanges();
         InitDbForTests(db);
     }
@@ -25,7 +27,7 @@ public static class DbHelpers
             // 1 Ford GT
             new()
             {
-                Id = Guid.Parse("afbee524-5972-4075-8800-7d1f9d7b0a0c"),
+                Id = Guid.Parse(GT_ID),
                 Status = Status.Live,
                 ReservePrice = 20000,
                 Seller = "bob",
@@ -43,7 +45,7 @@ public static class DbHelpers
             // 2 Bugatti Veyron
             new()
             {
-                Id = Guid.Parse("c8c3ec17-01bf-49db-82aa-1ef80b833a9f"),
+                Id = Guid.NewGuid(),
                 Status = Status.Live,
                 ReservePrice = 90000,
                 Seller = "alice",
@@ -61,7 +63,7 @@ public static class DbHelpers
             // 3 Ford mustang
             new()
             {
-                Id = Guid.Parse("bbab4d5a-8565-48b1-9450-5ac2a5c4a654"),
+                Id = Guid.NewGuid(),
                 Status = Status.Live,
                 Seller = "bob",
                 AuctionEnd = DateTime.UtcNow.AddDays(4),

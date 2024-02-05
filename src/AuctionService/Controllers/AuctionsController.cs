@@ -34,7 +34,7 @@ public class AuctionsController : ControllerBase
         return (await _auctionRepository.GetAuctions(date, cancellationToken)).ToList();
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<AuctionDto>> GetAuctionById([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         var auction = await _auctionRepository.GetAuctionById(id, cancellationToken);
@@ -83,12 +83,9 @@ public class AuctionsController : ControllerBase
 
         if (auction.Seller != User.Identity.Name)
             return Forbid();
-
-        auction.Item.Make = request.Make ?? auction.Item.Make;
-        auction.Item.Model = request.Model ?? auction.Item.Model;
-        auction.Item.Color = request.Color ?? auction.Item.Color;
-        auction.Item.Year = request.Year ?? auction.Item.Year;
-        auction.Item.Mileage = request.Mileage ?? auction.Item.Mileage;
+        
+        
+        request.UpdateEntity(auction.Item);
         auction.Item.UpdatedAt = DateTime.UtcNow;
         auction.UpdatedAt = DateTime.UtcNow;
 

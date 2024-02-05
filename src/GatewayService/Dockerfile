@@ -10,6 +10,7 @@ COPY src/GatewayService/GatewayService.csproj src/GatewayService/GatewayService.
 COPY src/BuildingBlocks/BuildingBlocks.csproj src/BuildingBlocks/BuildingBlocks.csproj
 COPY src/IdentityService/IdentityService.csproj src/IdentityService/IdentityService.csproj
 COPY tests/UnitTests/UnitTests.csproj tests/UnitTests/UnitTests.csproj
+COPY tests/IntegrationTests/IntegrationTests.csproj tests/IntegrationTests/IntegrationTests.csproj
 
 RUN dotnet restore WheelDealBids.sln
 
