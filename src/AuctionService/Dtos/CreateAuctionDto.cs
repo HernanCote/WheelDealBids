@@ -9,11 +9,11 @@ public record CreateAuctionDto
     [Required]
     public string Model { get; set; }
     [Required]
-    public int Year { get; set; }
+    public int? Year { get; set; }
     [Required]
     public string Color { get; set; }
     [Required]
-    public int Mileage { get; set; }
+    public int? Mileage { get; set; }
     [Required]
     public string ImageUrl { get; set; }
     [Required]
