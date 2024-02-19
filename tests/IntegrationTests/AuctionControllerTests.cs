@@ -264,7 +264,7 @@ public class AuctionControllerTests : IAsyncLifetime
         response.EnsureSuccessStatusCode();
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var createdAuction = await response.Content.ReadFromJsonAsync<AuctionDto>();
-        Assert.Equal("bob", createdAuction.Seller);
+        Assert.Equal("bob", createdAuction?.Seller);
     }
 
     [Fact]

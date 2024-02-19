@@ -41,7 +41,6 @@ export function Listings() {
   if (!data) {
     return <h3>Loading....</h3>
   }
-
   
   return (
     <>

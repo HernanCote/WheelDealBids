@@ -5,6 +5,7 @@ using BuildingBlocks.Extensions.Logging;
 using Clients;
 using Clients.Interfaces;
 using Consumers;
+using Managers;
 using MassTransit;
 using Polly;
 using Polly.Extensions.Http;
@@ -28,6 +29,8 @@ public static class HostingExtensions
             builder.Configuration.GetSection(nameof(MongoDbSettings)));
         builder.Services.Configure<AuctionServiceSettings>(
             builder.Configuration.GetSection(nameof(AuctionServiceSettings)));
+
+        builder.Services.AddScoped<ISearchManager, SearchManager>();
 
         builder.Services.AddMassTransit(x =>
         {
