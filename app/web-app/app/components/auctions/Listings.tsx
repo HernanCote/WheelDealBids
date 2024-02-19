@@ -1,26 +1,67 @@
-import React from 'react'
+'use client'
+import React, { useEffect, useState } from 'react';
+import { shallow } from 'zustand/shallow';
+import qs from 'query-string';
+
+import { useParamsStore } from '@/hooks/useParamsStore';
+
+import { Filters, Pagination, EmptyFilter } from '../common';
 import { AuctionCard } from './AuctionCard';
 
-async function getData(pageSize: number) {
-  const res = await fetch(`http://localhost:6001/search?pageSize=${pageSize}`);
+import { getAuctions } from '@/app/actions/auctionActions';
+import { Auction, PagedResult } from '@/types';
 
-  if (!res.ok)
-    throw new Error('Failed to fetch data');
 
-  return res.json();
-};
+export function Listings() {
+  
+  const [data, setData] = useState<PagedResult<Auction>>();
 
-async function Listings() {
+  const params = useParamsStore(state => ({
+    pageNumber: state.pageNumber,
+    pageSize: state.pageSize,
+    searchTerm: state.searchTerm,
+    orderBy: state.orderBy,
+    filterBy: state.filterBy,
+  }), shallow);
 
-  const data = await getData(10);
+  const setParams = useParamsStore(state => state.setParams);
+  const url = qs.stringifyUrl({url: '', query: params});
 
+  function setPageNumber(pageNumber: number) {
+    setParams({ pageNumber });
+  };
+
+  useEffect(() => {
+    (async () => {
+      const auctionsList = await getAuctions(url);
+      setData(auctionsList);
+    })();
+  }, [url]);
+
+  if (!data) {
+    return <h3>Loading....</h3>
+  }
+
+  
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-      {data && data.results.map((auction: any) => (
-        <AuctionCard key={auction.id} {...auction} />
-      ))}
-    </div>
+    <>
+      <Filters />
+      {
+        data.totalCount === 0 
+          ? <EmptyFilter showReset /> 
+          : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {data.results.map(auction => (
+              <AuctionCard key={auction.id} {...auction} />
+            ))}
+            </div>
+            <div className="flex justify-center mt-4">
+              <Pagination currentPage={params.pageNumber} pageCount={data.pageCount} pageChanged={setPageNumber}/>
+            </div>
+          </>
+        )
+      }
+    </>
   );
 };
-
-export { Listings };

@@ -20,15 +20,17 @@ public class SearchController : ControllerBase
             query.Match(Search.Full, searchParams.SearchTerm).SortByTextScore();
         }
         
-        Enum.TryParse<SearchOrderBy>(searchParams.OrderBy?.ToLower(), true, out var orderBy);
+        Enum.TryParse<SearchOrderBy>(searchParams.OrderBy, true, out var orderBy);
         query = orderBy switch
         {
             SearchOrderBy.Make => query.Sort(x => x.Ascending(a => a.Make)),
             SearchOrderBy.New => query.Sort(x => x.Descending(a => a.CreatedAt)),
+            SearchOrderBy.EndingSoon => query.Sort(x => x.Ascending(a => a.AuctionEnd)),
+            SearchOrderBy.Mileage => query.Sort(x => x.Ascending(a => a.Mileage)),
             _ => query.Sort(x => x.Ascending(a => a.AuctionEnd))
         };
 
-        Enum.TryParse<SearchFilterBy>(searchParams.FilterBy?.ToLower(), true, out var filterBy);
+        Enum.TryParse<SearchFilterBy>(searchParams.FilterBy, true, out var filterBy);
         query = filterBy switch
         {
             SearchFilterBy.Finished => query.Match(x => x.AuctionEnd < DateTime.UtcNow),

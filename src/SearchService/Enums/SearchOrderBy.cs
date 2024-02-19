@@ -4,5 +4,7 @@ public enum SearchOrderBy
 {
     None = 1,
     Make,
-    New
+    New,
+    EndingSoon,
+    Mileage
 }
