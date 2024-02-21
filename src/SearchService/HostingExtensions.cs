@@ -36,7 +36,7 @@ public static class HostingExtensions
         {
             x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("search", false));
             
-            x.AddConsumersFromNamespaceContaining<AuctionCreatedConsumer>();
+            x.AddConsumers(typeof(Program).Assembly);
             
             x.UsingRabbitMq((context, config) =>
             {

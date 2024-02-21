@@ -5,7 +5,7 @@ import qs from 'query-string';
 
 import { useParamsStore } from '@/hooks/useParamsStore';
 
-import { Filters, Pagination, EmptyFilter } from '../common';
+import { Filters, Pagination, EmptyFilter, Loader } from '../common';
 import { AuctionCard } from './AuctionCard';
 
 import { getAuctions } from '@/app/actions/auctionActions';
@@ -39,7 +39,11 @@ export function Listings() {
   }, [url]);
 
   if (!data) {
-    return <h3>Loading....</h3>
+    return (
+      <div className='h-[90vh] flex flex-col justify-center items-center'>
+        <Loader />
+      </div>
+    );
   }
   
   return (

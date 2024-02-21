@@ -41,7 +41,7 @@ public static class HostingExtensions
                 o.UseBusOutbox();
             });
     
-            x.AddConsumersFromNamespaceContaining<AuctionCreatedFaultConsumer>();
+            x.AddConsumers(typeof(Program).Assembly);
             x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auction", false));
     
             x.UsingRabbitMq((context, config) =>

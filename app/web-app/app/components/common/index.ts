@@ -5,3 +5,4 @@ export * from './Pagination';
 export * from './Search';
 export * from './Heading';
 export * from './EmptyFilter';
+export * from './Loader';

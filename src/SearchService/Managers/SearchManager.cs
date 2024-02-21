@@ -1,5 +1,6 @@
 namespace SearchService.Managers;
 
+using System.Linq.Expressions;
 using BuildingBlocks.Models;
 using BuildingBlocks.Utils;
 using Entities;
@@ -12,67 +13,98 @@ public class SearchManager : ISearchManager
     public async Task<Result<PagedResponse<IEnumerable<Item>>>> SearchItems(SearchParams searchParams)
     {
         var query = DB.PagedSearch<Item, Item>();
-
+        
         if (!string.IsNullOrEmpty(searchParams.SearchTerm))
         {
             query.Match(Search.Full, searchParams.SearchTerm).SortByTextScore();
         }
+        
+        ApplySorting(searchParams, query);
+        ApplyFilters(searchParams, query);
+        ApplyOtherFilters(searchParams, query);
+        ApplyPaging(searchParams, query);
+        
+        var result = await query.ExecuteAsync();
 
-        if (Enum.TryParse<SearchOrderBy>(searchParams.OrderBy, true, out var orderBy))
+        return BuildPagedResponse(searchParams, result)!;
+    }
+
+    private static PagedResponse<IEnumerable<Item>> BuildPagedResponse(SearchParams searchParams,
+        (IReadOnlyList<Item> Results, long TotalCount, int PageCount) result)
+    {
+        if (result.Results.Count == 0)
+            return PagedResponse<IEnumerable<Item>>.EmptyPagedResponse();
+        
+        return PagedResponse<IEnumerable<Item>>.From(result.Results, searchParams.PageNumber, result.PageCount, result.TotalCount);
+    }
+
+    private static void ApplyPaging(SearchParams searchParams, PagedSearch<Item, Item> query)
+    {
+        query.PageNumber(searchParams.PageNumber)
+            .PageSize(searchParams.PageSize);
+    }
+
+    private static void ApplyOtherFilters(SearchParams searchParams, PagedSearch<Item, Item> query)
+    {
+        if (!string.IsNullOrEmpty(searchParams.Seller))
         {
-            query = orderBy switch
-            {
-                SearchOrderBy.Make => query.Sort(x => x.Ascending(a => a.Make))
-                    .Sort(x => x.Ascending(a => a.Model)),
-                SearchOrderBy.New => query.Sort(x => x.Descending(a => a.CreatedAt)),
-                SearchOrderBy.EndingSoon => query.Sort(x => x.Ascending(a => a.AuctionEnd)),
-                SearchOrderBy.Mileage => query.Sort(x => x.Ascending(a => a.Mileage)),
-                _ => query.Sort(x => x.Ascending(a => a.AuctionEnd))
-            };
+            query.Match(x => x.Seller == searchParams.Seller);
+        }
+
+        if (!string.IsNullOrEmpty(searchParams.Winner))
+        {
+            query.Match(x => x.Winner == searchParams.Winner);
+        }
+    }
+    
+    private void ApplySorting(SearchParams searchParams, PagedSearch<Item, Item> query)
+    {
+        if (!string.IsNullOrEmpty(searchParams.OrderBy))
+        {
+            var sortExpression = GetSortExpression(searchParams.OrderBy);
+            query.Sort(sb => sb.Ascending(sortExpression));
         }
         else
         {
             query.Sort(x => x.Ascending(a => a.AuctionEnd));
         }
+    }
 
-        if (Enum.TryParse<SearchFilterBy>(searchParams.FilterBy, true, out var filterBy))
+    private Expression<Func<Item, object>> GetSortExpression(string orderByField)
+    {
+        Enum.TryParse<SearchOrderBy>(orderByField, true, out var orderBy);
+        return orderBy switch
         {
-            query = filterBy switch
-            {
-                SearchFilterBy.Finished => query.Match(x => x.AuctionEnd < DateTime.UtcNow),
-                SearchFilterBy.EndingSoon => query.Match(x => x.AuctionEnd < DateTime.UtcNow.AddHours(6)
-                                                              && x.AuctionEnd > DateTime.UtcNow),
-                _ => query.Match(x => x.AuctionEnd > DateTime.UtcNow)
-            };
+            SearchOrderBy.Make => x => x.Make!,
+            SearchOrderBy.New => x => x.CreatedAt,
+            SearchOrderBy.EndingSoon => x => x.AuctionEnd,
+            SearchOrderBy.Mileage => x => x.Mileage,
+            _ => x => x.AuctionEnd
+        };
+    }
+
+    private void ApplyFilters(SearchParams searchParams, PagedSearch<Item, Item> query)
+    {
+        if (!string.IsNullOrEmpty(searchParams.FilterBy))
+        {
+            var filterExpression = GetFilterExpression(searchParams.FilterBy);
+            query.Match(filterExpression);
         }
         else
         {
-            query = query.Match(x => x.AuctionEnd > DateTime.UtcNow);
+            query.Match(x => x.AuctionEnd > DateTime.UtcNow);
         }
+    }
 
-        if (!string.IsNullOrEmpty(searchParams.Seller))
+    private Expression<Func<Item, bool>> GetFilterExpression(string filterBy)
+    {
+        Enum.TryParse<SearchFilterBy>(filterBy, true, out var filter);
+        return filter switch
         {
-            query.Match(x => x.Seller == searchParams.Seller);
-        }
-        
-        if (!string.IsNullOrEmpty(searchParams.Winner))
-        {
-            query.Match(x => x.Winner == searchParams.Winner);
-        }
-
-        query.PageNumber(searchParams.PageNumber)
-            .PageSize(searchParams.PageSize);
-        
-        var result = await query.ExecuteAsync();
-
-        var response = new PagedResponse<IEnumerable<Item>>
-        {
-            Results = result.Results,
-            CurrentPage = searchParams.PageNumber,
-            PageCount = result.PageCount,
-            TotalCount = result.TotalCount
+            SearchFilterBy.Finished => x => x.AuctionEnd < DateTime.UtcNow,
+            SearchFilterBy.EndingSoon => x => x.AuctionEnd < DateTime.UtcNow.AddHours(6) 
+                                              && x.AuctionEnd > DateTime.UtcNow,
+            _ => x => x.AuctionEnd > DateTime.UtcNow
         };
-        
-        return response!;
     }
 }
